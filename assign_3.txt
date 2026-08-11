@@ -1,0 +1,649 @@
+ Java 8 + JDBC Assignment
+
+Customer Order & Invoice Management System
+
+1. Business Scenario
+
+You are required to develop a Customer Order & Invoice Management System for a simple e-commerce application.
+
+The application allows customers to purchase products available in the system. A customer can place multiple orders, and each order is associated with one product and a quantity.
+
+The system must maintain customer, product, and order information in a MySQL database.
+
+The application must be developed using:
+
+- Standard Java 8
+- Object-Oriented Programming
+- Java Collections
+- Java 8 Functional Programming
+- Java 8 Stream API
+- JDBC
+- MySQL
+
+
+The application must be implemented using pure JDBC for database access.
+
+The following technologies/frameworks must NOT be used:
+
+- Hibernate
+- JPA
+- Spring
+- Spring Boot
+- Spring Data
+- Any ORM framework
+
+---
+
+ 2. Domain Model
+
+The system contains three primary entities:
+
+
+Customer
+    |
+    | places
+    |
+    ▼
+  Order
+    |
+    | contains
+    |
+    ▼
+ Product
+
+
+A customer can place multiple orders.
+
+Each order belongs to one customer and refers to one product.
+	
+A product can be associated with multiple orders.
+
+---
+
+ 3. Customer
+
+Create a `Customer` class representing a customer of the application.
+
+The Customer must contain the following information:
+
+| Field      | Description                                  |
+| ---------- | -------------------------------------------- |
+| customerId | Unique identification number of the customer |
+| password   | Customer login password                      |
+| email      | Customer's unique email address              |
+| credit     | Available credit amount of the customer      |
+
+Functional Requirements
+
+1. The system must allow creation of a new customer.
+2. `customerId` must be unique.
+3. Email address must be unique.
+4. Password must not be empty.
+5. Credit cannot be negative.
+6. A customer must have sufficient credit to place an order.
+7. The system must allow searching for a customer using the customer ID.
+8. The system must allow searching for a customer using email and password.
+9. If a customer cannot be found, the application should handle the situation appropriately without causing a `NullPointerException`.
+
+---
+
+ 4. Product
+
+Create a `Product` class representing a product available for purchase.
+
+The Product must contain:
+
+| Field     | Description                         |
+| --------- | ----------------------------------- |
+| productNo | Unique product number               |
+| price     | Price of the product                |
+| stock     | Number of units currently available |
+
+Functional Requirements
+
+1. The system must allow creation of products.
+2. `productNo` must be unique.
+3. Product price must be greater than zero.
+4. Product stock cannot be negative.
+5. The system must allow searching for a product using the product number.
+6. The system must allow displaying all available products.
+7. The system must allow displaying products that are currently in stock.
+8. The system must allow displaying products based on a specified price range.
+9. The system must allow displaying products having stock greater than a specified quantity.
+
+---
+
+ 5. Order
+
+Create an `Order` class representing a purchase made by a customer.
+
+The Order must contain:
+
+| Field      | Description                        |
+| ---------- | ---------------------------------- |
+| orderNo    | Unique order number                |
+| orderDate  | Date on which the order was placed |
+| customerId | Customer who placed the order      |
+| productNo  | Product being purchased            |
+| quantity   | Number of units purchased          |
+
+The order date must use the Java 8 Date/Time API.
+
+Use:
+
+java.time.LocalDate
+
+
+instead of the older `java.util.Date`.
+
+---
+
+ 6. Customer Login
+
+The application must provide a customer login facility.
+
+The customer provides:
+
+
+Email
+Password
+
+
+The system must:
+
+1. Search for the customer in the database.
+2. Verify the supplied credentials.
+3. Allow the customer to continue if the credentials are valid.
+4. Handle invalid credentials appropriately.
+5. The login operation should represent the possibility that a customer may or may not exist.
+
+---
+
+ 7. Display Products
+
+After successful login, the customer should be able to view products.
+
+The application must provide the following options:
+
+7.1 Display All Products
+
+Display:
+
+
+Product No
+Price
+Stock
+
+
+7.2 Display Products Currently Available
+
+Display products whose stock is greater than zero.
+
+7.3 Search Products by Price
+
+Allow the customer to specify:
+
+
+Minimum Price
+Maximum Price
+
+
+Display products falling within that range.
+
+7.4 Search Products by Stock
+
+Allow the customer to specify a minimum stock quantity.
+
+Display products having stock greater than or equal to that quantity.
+
+---
+
+ 8. Place an Order
+
+A logged-in customer should be able to place an order.
+
+The customer must provide:
+
+
+Product Number
+Quantity
+
+
+For example:
+
+
+Customer ID : 101
+Product No  : P101
+Quantity    : 2
+
+
+The system must perform the following validations before creating the order.
+
+Validation 1 — Customer
+
+Verify that the customer exists.
+
+Validation 2 — Product
+
+Verify that the requested product exists.
+
+Validation 3 — Quantity
+
+Quantity must be greater than zero.
+
+Validation 4 — Stock
+
+Verify that sufficient stock is available.
+
+For example:
+
+
+Available Stock : 10
+Requested       : 4
+
+Order allowed.
+
+
+But:
+
+
+Available Stock : 3
+Requested       : 5
+
+Order rejected.
+
+
+Validation 5 — Order Amount
+
+Calculate:
+
+
+Order Amount = Product Price × Quantity
+
+
+Validation 6 — Customer Credit
+
+Verify that the customer's available credit is sufficient to purchase the product.
+
+For example:
+
+
+Product Price     = ₹50,000
+Quantity          = 2
+
+Order Amount      = ₹1,00,000
+
+Customer Credit   = ₹1,50,000
+
+Order allowed.
+
+
+If the customer's credit is insufficient, the order must be rejected.
+
+---
+
+ 9. Order Processing
+
+When an order is successfully placed, the system must perform all of the following operations:
+
+1. Create a new order.
+2. Reduce the product stock.
+3. Reduce the customer's available credit.
+
+For example:
+
+
+Before Order
+
+Product Stock       = 20
+Customer Credit     = ₹1,00,000
+
+Order Quantity      = 3
+Product Price       = ₹10,000
+
+
+After Order
+
+Product Stock       = 17
+Customer Credit     = ₹70,000
+
+
+The database must not be left in an inconsistent state.
+
+---
+
+ 10. View Customer Order History
+
+A customer should be able to view all orders placed by them.
+
+For example:
+
+
+Customer ID : 101
+
+Order No    Date          Product    Quantity
+------------------------------------------------
+1001        01-Aug-2026   P101       2
+1005        04-Aug-2026   P102       1
+1009        08-Aug-2026   P104       4
+
+
+The application should provide the ability to:
+
+1. Display all orders of a customer.
+2. Display orders placed after a particular date.
+3. Display orders placed before a particular date.
+4. Display orders placed within a specified date range.
+
+---
+
+ 11. Generate Order Details
+
+For invoice generation, the application needs more information than what is stored directly in the Order object.
+
+For each order, the application should determine:
+
+
+Order Number
+Order Date
+Customer
+Product
+Product Price
+Quantity
+Order Amount
+
+
+The order amount must be calculated as:
+
+
+Order Amount = Product Price × Quantity
+
+
+The application should create an appropriate Java object to represent these combined details.
+
+---
+
+ 12. Generate Customer Invoice
+
+The customer should be able to generate an invoice containing all orders placed by the customer.
+
+The invoice should contain:
+
+
+=============================================
+                 CUSTOMER INVOICE
+=============================================
+
+Customer ID : 101
+Email       : rahul@gmail.com
+
+---------------------------------------------
+Order No    Product    Qty    Price   Amount
+---------------------------------------------
+1001        P101        2     75000   150000
+1005        P102        1     45000    45000
+1009        P104        4     25000   100000
+---------------------------------------------
+
+TOTAL                               ₹295000
+=============================================
+
+
+The total invoice amount must be calculated from the individual order amounts.
+
+---
+
+ 13. Invoice Requirements
+
+The invoice generation functionality must support:
+
+13.1 Individual Order Amount
+
+For every order:
+
+
+Product Price × Quantity
+
+
+must be calculated.
+
+13.2 Total Invoice Amount
+
+Calculate the sum of all order amounts belonging to the customer.
+
+13.3 Highest Value Order
+
+Display the order having the highest order amount.
+
+Example:
+
+
+Highest Order:
+Order No : 1005
+Amount   : ₹1,50,000
+
+
+13.4 Lowest Value Order
+
+Display the order having the lowest order amount.
+
+13.5 Number of Orders
+
+Display the total number of orders placed by the customer.
+
+---
+
+ 14. Customer Purchase Analysis
+
+The application should provide a report showing the total purchase amount of every customer.
+
+Example:
+
+
+Customer ID     Total Purchase
+--------------------------------
+101             ₹8,50,000
+102             ₹4,25,000
+103             ₹6,75,000
+104             ₹2,10,000
+
+
+The application should also identify customers whose total purchases exceed a specified amount.
+
+For example:
+
+
+Find customers whose total purchase
+is greater than ₹5,00,000.
+
+
+---
+
+ 15. Product Sales Analysis
+
+The application must provide a report showing how many units of each product have been sold.
+
+Example:
+
+
+Product No      Units Sold
+---------------------------
+P101            25
+P102            18
+P103            12
+P104            41
+
+
+The application must identify the best-selling product based on total quantity sold.
+
+Example:
+
+
+Best Selling Product : P104
+Units Sold           : 41
+
+
+---
+
+ 16. Product Revenue Analysis
+
+The application must calculate the total revenue generated by each product.
+
+Example:
+
+
+Product No      Revenue
+---------------------------
+P101            ₹18,75,000
+P102            ₹8,10,000
+P103            ₹15,00,000
+P104            ₹21,50,000
+
+
+The application must also identify the product that generated the highest revenue.
+
+---
+
+ 17. Order Date Analysis
+
+The application must provide date-based order reports.
+
+Users should be able to specify:
+
+
+From Date
+To Date
+
+
+and retrieve all orders placed during that period.
+
+For example:
+
+
+From Date : 01-Aug-2026
+To Date   : 10-Aug-2026
+
+
+The application should display all matching orders.
+
+---
+
+ 18. Monthly Sales Analysis
+
+The application must provide a monthly sales report.
+
+For example:
+
+
+Month       Total Sales
+------------------------
+JANUARY     ₹12,50,000
+FEBRUARY    ₹15,20,000
+MARCH       ₹18,75,000
+
+
+The report should group orders based on the month in which they were placed.
+
+---
+
+ 19. Customer Order Analysis
+
+The application must provide a report showing the number of orders placed by each customer.
+
+Example:
+
+
+Customer ID     Number of Orders
+--------------------------------
+101             5
+102             3
+103             7
+104             2
+
+
+The application should also identify the customer who has placed the maximum number of orders.
+
+---
+
+ 20. Top Customers
+
+The application must provide a report showing the Top 3 customers based on total purchase value.
+
+Example:
+
+
+Rank    Customer     Purchase Amount
+-------------------------------------
+1       103          ₹12,50,000
+2       101          ₹8,75,000
+3       102          ₹6,20,000
+
+
+If fewer than three customers exist, display all available customers.
+
+---
+
+ 21. Customer Product Analysis
+
+The application should be able to determine which products a particular customer has purchased.
+
+For example:
+
+
+Customer ID : 101
+
+Products Purchased:
+P101
+P102
+P104
+
+
+The report should not display duplicate product numbers even if the customer has purchased the same product multiple times.
+
+---
+
+ 22. Product Customer Analysis
+
+The application should also provide the reverse analysis.
+
+For a specified product, display all customers who have purchased that product.
+
+Example:
+
+
+Product : P101
+
+Customers:
+101
+102
+104
+
+
+Duplicate customer IDs should not be displayed.
+
+---
+
+ 23. Advanced Order Analysis
+
+The application should provide a report that identifies:
+
+1. Total number of orders.
+2. Total quantity of products sold.
+3. Total revenue.
+4. Highest-value order.
+5. Lowest-value order.
+6. Average order value.
+
+Example:
+
+
+====================================
+        ORDER STATISTICS
+====================================
+
+Total Orders       : 125
+Units Sold         : 486
+Total Revenue      : ₹52,50,000
+Highest Order      : ₹2,50,000
+Lowest Order       : ₹500
+Average Order Value: ₹42,000
