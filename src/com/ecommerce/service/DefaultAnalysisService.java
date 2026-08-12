@@ -9,11 +9,12 @@ import com.ecommerce.util.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class DefaultAnalysisService implements AnalysisService {
     private final OrderDao orderDao;
@@ -32,26 +33,32 @@ public class DefaultAnalysisService implements AnalysisService {
 
     @Override
     public Map<String, Double> getCustomerPurchases() {
-        return getAllDetails().stream().collect(Collectors.groupingBy(
-                od -> od.getCustomer().getCustomerId(),
-                Collectors.summingDouble(OrderDetails::getOrderAmount)
-        ));
+        Map<String, Double> result = new HashMap<>();
+        getAllDetails().stream().forEach(od -> {
+            String customerId = od.getCustomer().getCustomerId();
+            result.put(customerId, result.getOrDefault(customerId, 0.0) + od.getOrderAmount());
+        });
+        return result;
     }
 
     @Override
     public List<String> getCustomersExceedingPurchase(double limit) {
-        return getCustomerPurchases().entrySet().stream()
+        List<String> result = new ArrayList<>();
+        getCustomerPurchases().entrySet().stream()
                 .filter(entry -> entry.getValue() > limit)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override
     public Map<String, Integer> getProductUnitsSold() {
-        return getAllDetails().stream().collect(Collectors.groupingBy(
-                od -> od.getProduct().getProductNo(),
-                Collectors.summingInt(OrderDetails::getQuantity)
-        ));
+        Map<String, Integer> result = new HashMap<>();
+        getAllDetails().stream().forEach(od -> {
+            String productNo = od.getProduct().getProductNo();
+            result.put(productNo, result.getOrDefault(productNo, 0) + od.getQuantity());
+        });
+        return result;
     }
 
     @Override
@@ -62,10 +69,12 @@ public class DefaultAnalysisService implements AnalysisService {
 
     @Override
     public Map<String, Double> getProductRevenue() {
-        return getAllDetails().stream().collect(Collectors.groupingBy(
-                od -> od.getProduct().getProductNo(),
-                Collectors.summingDouble(OrderDetails::getOrderAmount)
-        ));
+        Map<String, Double> result = new HashMap<>();
+        getAllDetails().stream().forEach(od -> {
+            String productNo = od.getProduct().getProductNo();
+            result.put(productNo, result.getOrDefault(productNo, 0.0) + od.getOrderAmount());
+        });
+        return result;
     }
 
     @Override
@@ -79,25 +88,31 @@ public class DefaultAnalysisService implements AnalysisService {
         if (from == null || to == null || to.isBefore(from)) {
             return Collections.emptyList();
         }
-        return getAllDetails().stream()
+        List<OrderDetails> result = new ArrayList<>();
+        getAllDetails().stream()
                 .filter(od -> !od.getOrderDate().isBefore(from) && !od.getOrderDate().isAfter(to))
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override
     public Map<String, Double> getMonthlySales() {
-        return getAllDetails().stream().collect(Collectors.groupingBy(
-                od -> od.getOrderDate().getMonth().name(),
-                Collectors.summingDouble(OrderDetails::getOrderAmount)
-        ));
+        Map<String, Double> result = new HashMap<>();
+        getAllDetails().stream().forEach(od -> {
+            String month = od.getOrderDate().getMonth().name();
+            result.put(month, result.getOrDefault(month, 0.0) + od.getOrderAmount());
+        });
+        return result;
     }
 
     @Override
     public Map<String, Long> getCustomerOrderCounts() {
-        return getAllDetails().stream().collect(Collectors.groupingBy(
-                od -> od.getCustomer().getCustomerId(),
-                Collectors.counting()
-        ));
+        Map<String, Long> result = new HashMap<>();
+        getAllDetails().stream().forEach(od -> {
+            String customerId = od.getCustomer().getCustomerId();
+            result.put(customerId, result.getOrDefault(customerId, 0L) + 1L);
+        });
+        return result;
     }
 
     @Override
@@ -111,10 +126,12 @@ public class DefaultAnalysisService implements AnalysisService {
         if (limit <= 0) {
             return Collections.emptyList();
         }
-        return getCustomerPurchases().entrySet().stream()
+        List<Map.Entry<String, Double>> result = new ArrayList<>();
+        getCustomerPurchases().entrySet().stream()
                 .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
                 .limit(limit)
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override
@@ -122,11 +139,13 @@ public class DefaultAnalysisService implements AnalysisService {
         if (customerId == null) {
             return Collections.emptyList();
         }
-        return getAllDetails().stream()
+        List<String> result = new ArrayList<>();
+        getAllDetails().stream()
                 .filter(od -> od.getCustomer().getCustomerId().equals(customerId))
                 .map(od -> od.getProduct().getProductNo())
                 .distinct()
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override
@@ -134,11 +153,13 @@ public class DefaultAnalysisService implements AnalysisService {
         if (productNo == null) {
             return Collections.emptyList();
         }
-        return getAllDetails().stream()
+        List<String> result = new ArrayList<>();
+        getAllDetails().stream()
                 .filter(od -> od.getProduct().getProductNo().equals(productNo))
                 .map(od -> od.getCustomer().getCustomerId())
                 .distinct()
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override

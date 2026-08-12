@@ -17,8 +17,8 @@ import com.ecommerce.util.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DefaultOrderService implements OrderService {
     private final CustomerDao customerDao;
@@ -100,23 +100,29 @@ public class DefaultOrderService implements OrderService {
 
     @Override
     public List<OrderDetails> getCustomerOrderHistoryAfter(String customerId, LocalDate afterDate) {
-        return getCustomerOrderHistory(customerId).stream()
+        List<OrderDetails> result = new ArrayList<>();
+        getCustomerOrderHistory(customerId).stream()
                 .filter(o -> o.getOrderDate().isAfter(afterDate))
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override
     public List<OrderDetails> getCustomerOrderHistoryBefore(String customerId, LocalDate beforeDate) {
-        return getCustomerOrderHistory(customerId).stream()
+        List<OrderDetails> result = new ArrayList<>();
+        getCustomerOrderHistory(customerId).stream()
                 .filter(o -> o.getOrderDate().isBefore(beforeDate))
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override
     public List<OrderDetails> getCustomerOrderHistoryBetween(String customerId, LocalDate fromDate, LocalDate toDate) {
-        return getCustomerOrderHistory(customerId).stream()
+        List<OrderDetails> result = new ArrayList<>();
+        getCustomerOrderHistory(customerId).stream()
                 .filter(o -> !o.getOrderDate().isBefore(fromDate) && !o.getOrderDate().isAfter(toDate))
-                .collect(Collectors.toList());
+                .forEach(result::add);
+        return result;
     }
 
     @Override
