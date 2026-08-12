@@ -35,7 +35,7 @@ public class JdbcOrderDao implements OrderDao {
     @Override
     public List<Order> findAll(Connection conn) throws SQLException {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT order_no, order_date, customer_id, product_no, quantity FROM orders";
+        String sql = "SELECT order_no, order_date, customer_id, product_no, quantity FROM orders ORDER BY order_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -57,7 +57,8 @@ public class JdbcOrderDao implements OrderDao {
         String sql = "SELECT o.order_no, o.order_date, o.customer_id, c.password, c.email, c.credit, " +
                 "o.product_no, p.price, p.stock, o.quantity FROM orders o " +
                 "JOIN customers c ON o.customer_id = c.customer_id " +
-                "JOIN products p ON o.product_no = p.product_no";
+                "JOIN products p ON o.product_no = p.product_no " +
+                "ORDER BY o.order_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -74,7 +75,8 @@ public class JdbcOrderDao implements OrderDao {
                 "o.product_no, p.price, p.stock, o.quantity FROM orders o " +
                 "JOIN customers c ON o.customer_id = c.customer_id " +
                 "JOIN products p ON o.product_no = p.product_no " +
-                "WHERE o.customer_id = ?";
+                "WHERE o.customer_id = ? " +
+                "ORDER BY o.order_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, customerId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -93,7 +95,8 @@ public class JdbcOrderDao implements OrderDao {
                 "o.product_no, p.price, p.stock, o.quantity FROM orders o " +
                 "JOIN customers c ON o.customer_id = c.customer_id " +
                 "JOIN products p ON o.product_no = p.product_no " +
-                "WHERE o.order_date BETWEEN ? AND ?";
+                "WHERE o.order_date BETWEEN ? AND ? " +
+                "ORDER BY o.order_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(fromDate));
             stmt.setDate(2, Date.valueOf(toDate));
@@ -113,7 +116,8 @@ public class JdbcOrderDao implements OrderDao {
                 "o.product_no, p.price, p.stock, o.quantity FROM orders o " +
                 "JOIN customers c ON o.customer_id = c.customer_id " +
                 "JOIN products p ON o.product_no = p.product_no " +
-                "WHERE o.product_no = ?";
+                "WHERE o.product_no = ? " +
+                "ORDER BY o.order_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, productNo);
             try (ResultSet rs = stmt.executeQuery()) {

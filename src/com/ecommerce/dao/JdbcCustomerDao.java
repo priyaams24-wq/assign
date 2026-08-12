@@ -64,7 +64,7 @@ public class JdbcCustomerDao implements CustomerDao {
     @Override
     public List<Customer> findAll(Connection conn) throws SQLException {
         List<Customer> customers = new ArrayList<>();
-        String sql = "SELECT customer_id, password, email, credit FROM customers";
+        String sql = "SELECT customer_id, password, email, credit FROM customers ORDER BY customer_id ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {

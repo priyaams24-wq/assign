@@ -38,7 +38,7 @@ public class JdbcProductDao implements ProductDao {
     @Override
     public List<Product> findAll(Connection conn) throws SQLException {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT product_no, price, stock FROM products";
+        String sql = "SELECT product_no, price, stock FROM products ORDER BY product_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -51,7 +51,7 @@ public class JdbcProductDao implements ProductDao {
     @Override
     public List<Product> findAvailable(Connection conn) throws SQLException {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT product_no, price, stock FROM products WHERE stock > 0";
+        String sql = "SELECT product_no, price, stock FROM products WHERE stock > 0 ORDER BY product_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -64,7 +64,7 @@ public class JdbcProductDao implements ProductDao {
     @Override
     public List<Product> findByPriceRange(double minPrice, double maxPrice, Connection conn) throws SQLException {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT product_no, price, stock FROM products WHERE price BETWEEN ? AND ?";
+        String sql = "SELECT product_no, price, stock FROM products WHERE price BETWEEN ? AND ? ORDER BY price ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDouble(1, minPrice);
             stmt.setDouble(2, maxPrice);
@@ -80,7 +80,7 @@ public class JdbcProductDao implements ProductDao {
     @Override
     public List<Product> findByStockGreaterThanOrEqual(int quantity, Connection conn) throws SQLException {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT product_no, price, stock FROM products WHERE stock >= ?";
+        String sql = "SELECT product_no, price, stock FROM products WHERE stock >= ? ORDER BY product_no ASC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, quantity);
             try (ResultSet rs = stmt.executeQuery()) {

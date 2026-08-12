@@ -1,9 +1,9 @@
-CREATE DATABASE IF NOT EXISTS ecommerce_db;
-USE ecommerce_db;
+-- Note: You should create the database 'ecommerce_db' in PostgreSQL before running this script:
+-- CREATE DATABASE ecommerce_db;
 
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS customers CASCADE;
 
 CREATE TABLE customers (
     customer_id VARCHAR(50) PRIMARY KEY,
@@ -19,7 +19,7 @@ CREATE TABLE products (
 );
 
 CREATE TABLE orders (
-    order_no INT AUTO_INCREMENT PRIMARY KEY,
+    order_no SERIAL PRIMARY KEY,
     order_date DATE NOT NULL,
     customer_id VARCHAR(50) NOT NULL,
     product_no VARCHAR(50) NOT NULL,
