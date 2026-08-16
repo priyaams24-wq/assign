@@ -4,73 +4,52 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Customer Invoice</title>
+    <title>Customer Invoice - Console Mode</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-        h1 { margin: 0; color: #333; }
-        .btn-back { padding: 8px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
-        .btn-back:hover { background-color: #5a6268; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        .info-card { background: #f8f9fa; padding: 20px; border-radius: 6px; border: 1px solid #dee2e6; }
-        .info-card h3 { margin: 0 0 15px 0; color: #007bff; border-bottom: 1px solid #dee2e6; padding-bottom: 8px; }
-        .info-card p { margin: 8px 0; font-size: 15px; color: #555; }
-        .info-card strong { color: #222; }
+        body { font-family: 'Courier New', Courier, monospace; background-color: #ffffff; color: #000000; padding: 30px; line-height: 1.5; }
+        .console-box { border: 2px solid #000; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .btn-back { display: inline-block; margin-bottom: 20px; color: #0000ee; text-decoration: none; }
+        .btn-back:hover { text-decoration: underline; }
+        .summary-box { border: 1px dashed #000; padding: 15px; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background-color: #007bff; color: white; }
-        tr:hover { background-color: #f8f9fa; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Customer Invoice Summary</h1>
-            <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">Back to Portal</a>
+    <div class="console-box">
+        <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">&lt; Back to Portal</a>
+        
+        <h2>--- CUSTOMER INVOICE ---</h2>
+        
+        <div class="summary-box">
+            <pre>
+==============================================
+               INVOICE SUMMARY
+==============================================
+Customer ID       : ${invoice.customer().customerId()}
+Email Address     : ${invoice.customer().email()}
+Available Credit  : ₹${String.format("%,.2f", invoice.customer().credit())}
+----------------------------------------------
+Total Orders      : ${invoice.numberOfOrders()}
+Total Amount Spent: ₹${String.format("%,.2f", invoice.totalAmount())}
+----------------------------------------------
+Highest Order     : <c:choose><c:when test="${not empty invoice.highestOrder()}">₹${String.format("%,.2f", invoice.highestOrder().amount())} (Order #${invoice.highestOrder().orderNo()})</c:when><c:otherwise>N/A</c:otherwise></c:choose>
+Lowest Order      : <c:choose><c:when test="${not empty invoice.lowestOrder()}">₹${String.format("%,.2f", invoice.lowestOrder().amount())} (Order #${invoice.lowestOrder().orderNo()})</c:when><c:otherwise>N/A</c:otherwise></c:choose>
+==============================================
+            </pre>
         </div>
 
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>Customer Information</h3>
-                <p><strong>Customer ID:</strong> ${invoice.customer().customerId()}</p>
-                <p><strong>Email Address:</strong> ${invoice.customer().email()}</p>
-                <p><strong>Available Credit:</strong> ₹${String.format("%,.2f", invoice.customer().credit())}</p>
-            </div>
-            
-            <div class="info-card">
-                <h3>Invoice Details</h3>
-                <p><strong>Total Orders Placed:</strong> ${invoice.numberOfOrders()}</p>
-                <p><strong>Total Amount Spent:</strong> <span style="color: #28a745; font-weight: bold;">₹${String.format("%,.2f", invoice.totalAmount())}</span></p>
-                <p><strong>Highest Order:</strong> 
-                    <c:choose>
-                        <c:when test="${not empty invoice.highestOrder()}">
-                            ₹${String.format("%,.2f", invoice.highestOrder().amount())} (Order #${invoice.highestOrder().orderNo()})
-                        </c:when>
-                        <c:otherwise>N/A</c:otherwise>
-                    </c:choose>
-                </p>
-                <p><strong>Lowest Order:</strong> 
-                    <c:choose>
-                        <c:when test="${not empty invoice.lowestOrder()}">
-                            ₹${String.format("%,.2f", invoice.lowestOrder().amount())} (Order #${invoice.lowestOrder().orderNo()})
-                        </c:when>
-                        <c:otherwise>N/A</c:otherwise>
-                    </c:choose>
-                </p>
-            </div>
-        </div>
-
-        <h2>Itemized Orders</h2>
+        <h3>ITEMIZED ORDERS:</h3>
         <table>
             <thead>
                 <tr>
                     <th>Order No</th>
                     <th>Order Date</th>
                     <th>Product No</th>
-                    <th>Unit Price (₹)</th>
+                    <th>Unit Price</th>
                     <th>Quantity</th>
-                    <th>Total Amount (₹)</th>
+                    <th>Total Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,13 +59,13 @@
                         <td>${item.orderDate()}</td>
                         <td><strong>${item.product().productNo()}</strong></td>
                         <td>₹${String.format("%,.2f", item.price())}</td>
-                        <td>${item.quantity()}</td>
-                        <td style="color: #28a745; font-weight: bold;">₹${String.format("%,.2f", item.amount())}</td>
+                        <td>${item.quantity()} units</td>
+                        <td style="font-weight: bold;">₹${String.format("%,.2f", item.amount())}</td>
                     </tr>
                 </c:forEach>
                 <c:if test="${empty invoice.orders()}">
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #888; padding: 20px;">No invoice items available.</td>
+                        <td colspan="6" style="text-align: center; color: #888;">No invoice items available.</td>
                     </tr>
                 </c:if>
             </tbody>

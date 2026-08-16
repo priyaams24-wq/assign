@@ -4,58 +4,41 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Order History</title>
+    <title>Order History - Console Mode</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-        h1 { margin: 0; color: #333; }
-        .btn-back { padding: 8px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
-        .btn-back:hover { background-color: #5a6268; }
-        .filters { background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #dee2e6; }
-        .filters form { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; }
-        .filter-group { display: flex; flex-direction: column; }
-        .filter-group label { font-size: 13px; color: #666; margin-bottom: 5px; }
-        .filter-group input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn-filter { padding: 6px 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-filter:hover { background-color: #0056b3; }
-        .btn-reset { padding: 6px 12px; background-color: #e2e3e5; color: #383d41; text-decoration: none; border-radius: 4px; text-align: center; line-height: 20px; }
-        .btn-reset:hover { background-color: #d6d8db; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background-color: #007bff; color: white; }
-        tr:hover { background-color: #f8f9fa; }
+        body { font-family: 'Courier New', Courier, monospace; background-color: #ffffff; color: #000000; padding: 30px; line-height: 1.5; }
+        .console-box { border: 2px solid #000; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .btn-back { display: inline-block; margin-bottom: 20px; color: #0000ee; text-decoration: none; }
+        .btn-back:hover { text-decoration: underline; }
+        .filter-section { border: 1px dashed #000; padding: 15px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Your Order History</h1>
-            <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">Back to Portal</a>
-        </div>
-
-        <div class="filters">
-            <h4 style="margin: 0 0 10px 0;">Filter Order History</h4>
+    <div class="console-box">
+        <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">&lt; Back to Portal</a>
+        
+        <h2>--- ORDER HISTORY ---</h2>
+        
+        <div class="filter-section">
+            <h4 style="margin: 0 0 10px 0;">[ FILTER ORDERS ]</h4>
             <form action="${pageContext.request.contextPath}/webmvc/orders/history" method="get">
                 <input type="hidden" name="customerId" value="${customerId}" />
-                <div class="filter-group">
-                    <label>From Date</label>
-                    <input type="date" name="fromDate" value="${fromDate}" />
-                </div>
-                <div class="filter-group">
-                    <label>To Date</label>
-                    <input type="date" name="toDate" value="${toDate}" />
-                </div>
-                <div style="border-left: 1px solid #ccc; padding-left: 15px;" class="filter-group">
-                    <label>Placed After</label>
-                    <input type="date" name="afterDate" value="${afterDate}" />
-                </div>
-                <div class="filter-group">
-                    <label>Placed Before</label>
-                    <input type="date" name="beforeDate" value="${beforeDate}" />
-                </div>
-                <button type="submit" class="btn-filter">Apply Filters</button>
-                <a href="${pageContext.request.contextPath}/webmvc/orders/history" class="btn-reset">Reset</a>
+                
+                Date Range (YYYY-MM-DD):<br/>
+                From: <input type="text" name="fromDate" value="${fromDate}" style="width: 100px; font-family: 'Courier New';" placeholder="2026-08-01" /> 
+                To: <input type="text" name="toDate" value="${toDate}" style="width: 100px; font-family: 'Courier New';" placeholder="2026-08-31" />
+                <br/><br/>
+                
+                Other Date Filters (YYYY-MM-DD):<br/>
+                After:  <input type="text" name="afterDate" value="${afterDate}" style="width: 100px; font-family: 'Courier New';" placeholder="2026-08-01" /> 
+                Before: <input type="text" name="beforeDate" value="${beforeDate}" style="width: 100px; font-family: 'Courier New';" placeholder="2026-08-31" />
+                <br/><br/>
+                
+                <input type="submit" value="Search Orders" style="font-family: 'Courier New'; padding: 4px 10px; cursor: pointer;" />
+                <a href="${pageContext.request.contextPath}/webmvc/orders/history?customerId=${customerId}" style="margin-left: 10px; color: #555;">[Reset]</a>
             </form>
         </div>
 
@@ -65,9 +48,9 @@
                     <th>Order No</th>
                     <th>Order Date</th>
                     <th>Product No</th>
-                    <th>Unit Price (₹)</th>
+                    <th>Unit Price</th>
                     <th>Quantity</th>
-                    <th>Total Amount (₹)</th>
+                    <th>Total Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -77,13 +60,13 @@
                         <td>${item.orderDate()}</td>
                         <td><strong>${item.product().productNo()}</strong></td>
                         <td>₹${String.format("%,.2f", item.price())}</td>
-                        <td>${item.quantity()}</td>
-                        <td style="color: #28a745; font-weight: bold;">₹${String.format("%,.2f", item.amount())}</td>
+                        <td>${item.quantity()} units</td>
+                        <td style="font-weight: bold;">₹${String.format("%,.2f", item.amount())}</td>
                     </tr>
                 </c:forEach>
                 <c:if test="${empty history}">
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #888; padding: 20px;">No order records found.</td>
+                        <td colspan="6" style="text-align: center; color: #888;">No orders matching search criteria found.</td>
                     </tr>
                 </c:if>
             </tbody>

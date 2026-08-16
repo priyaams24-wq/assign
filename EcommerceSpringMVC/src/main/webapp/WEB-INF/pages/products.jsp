@@ -4,67 +4,49 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Available Products</title>
+    <title>Browse Products - Console Mode</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
-        h1 { margin: 0; color: #333; }
-        .btn-back { padding: 8px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
-        .btn-back:hover { background-color: #5a6268; }
-        .filters { background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #dee2e6; }
-        .filters form { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; }
-        .filter-group { display: flex; flex-direction: column; }
-        .filter-group label { font-size: 13px; color: #666; margin-bottom: 5px; }
-        .filter-group input { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn-filter { padding: 6px 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-filter:hover { background-color: #0056b3; }
-        .btn-reset { padding: 6px 12px; background-color: #e2e3e5; color: #383d41; text-decoration: none; border-radius: 4px; text-align: center; line-height: 20px; }
-        .btn-reset:hover { background-color: #d6d8db; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background-color: #007bff; color: white; }
-        tr:hover { background-color: #f8f9fa; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .badge-success { background-color: #d4edda; color: #155724; }
-        .badge-danger { background-color: #f8d7da; color: #721c24; }
-        .btn-order { padding: 6px 12px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
-        .btn-order:hover { background-color: #218838; }
-        .btn-disabled { padding: 6px 12px; background-color: #e2e3e5; color: #868e96; border-radius: 4px; font-size: 14px; cursor: not-allowed; text-decoration: none; }
+        body { font-family: 'Courier New', Courier, monospace; background-color: #ffffff; color: #000000; padding: 30px; line-height: 1.5; }
+        .console-box { border: 2px solid #000; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .btn-back { display: inline-block; margin-bottom: 20px; color: #0000ee; text-decoration: none; }
+        .btn-back:hover { text-decoration: underline; }
+        .filter-section { border: 1px dashed #000; padding: 15px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn-order { color: #0000ee; text-decoration: none; font-weight: bold; }
+        .btn-order:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Browse Products</h1>
-            <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">Back to Portal</a>
-        </div>
-
-        <div class="filters">
-            <h4 style="margin: 0 0 10px 0;">Filter Products</h4>
+    <div class="console-box">
+        <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">&lt; Back to Portal</a>
+        
+        <h2>--- BROWSE PRODUCTS ---</h2>
+        
+        <div class="filter-section">
+            <h4 style="margin: 0 0 10px 0;">[ FILTER PRODUCTS ]</h4>
             <form action="${pageContext.request.contextPath}/webmvc/products/list" method="get">
                 <input type="hidden" name="customerId" value="${customerId}" />
-                <div class="filter-group">
-                    <label>Availability</label>
-                    <select name="filter" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
-                        <option value="all" ${filter != 'available' ? 'selected' : ''}>All Products</option>
-                        <option value="available" ${filter == 'available' ? 'selected' : ''}>Available (In Stock Only)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Min Price (₹)</label>
-                    <input type="number" name="minPrice" step="0.01" value="${minPrice}" />
-                </div>
-                <div class="filter-group">
-                    <label>Max Price (₹)</label>
-                    <input type="number" name="maxPrice" step="0.01" value="${maxPrice}" />
-                </div>
-                <div class="filter-group">
-                    <label>Min Stock</label>
-                    <input type="number" name="minStock" value="${minStock}" />
-                </div>
-                <button type="submit" class="btn-filter">Apply Filters</button>
-                <a href="${pageContext.request.contextPath}/webmvc/products/list" class="btn-reset">Reset</a>
+                
+                Availability:
+                <select name="filter" style="font-family: 'Courier New';">
+                    <option value="all" ${filter == 'all' ? 'selected' : ''}>All Products</option>
+                    <option value="available" ${filter == 'available' ? 'selected' : ''}>In Stock Only</option>
+                </select>
+                <br/><br/>
+                
+                Price Range: 
+                Min ₹<input type="number" name="minPrice" step="0.01" value="${minPrice}" style="width: 80px; font-family: 'Courier New';" /> 
+                Max ₹<input type="number" name="maxPrice" step="0.01" value="${maxPrice}" style="width: 80px; font-family: 'Courier New';" />
+                <br/><br/>
+                
+                Minimum Stock: 
+                <input type="number" name="minStock" value="${minStock}" style="width: 80px; font-family: 'Courier New';" />
+                <br/><br/>
+                
+                <input type="submit" value="Apply Filter" style="font-family: 'Courier New'; padding: 4px 10px; cursor: pointer;" />
+                <a href="${pageContext.request.contextPath}/webmvc/products/list?customerId=${customerId}" style="margin-left: 10px; color: #555;">[Reset]</a>
             </form>
         </div>
 
@@ -72,7 +54,7 @@
             <thead>
                 <tr>
                     <th>Product No</th>
-                    <th>Price (₹)</th>
+                    <th>Price</th>
                     <th>Stock</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -86,21 +68,17 @@
                         <td>${product.stock()}</td>
                         <td>
                             <c:choose>
-                                <c:when test="${product.stock() > 0}">
-                                    <span class="badge badge-success">IN STOCK</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="badge badge-danger">OUT OF STOCK</span>
-                                </c:otherwise>
+                                <c:when test="${product.stock() > 0}">IN STOCK</c:when>
+                                <c:otherwise><span style="color:red;">OUT OF STOCK</span></c:otherwise>
                             </c:choose>
                         </td>
                         <td>
                             <c:choose>
                                 <c:when test="${product.stock() > 0}">
-                                    <a href="${pageContext.request.contextPath}/webmvc/orders/checkout?productNo=${product.productNo()}&customerId=${customerId}" class="btn-order">Order Now</a>
+                                    <a href="${pageContext.request.contextPath}/webmvc/orders/checkout?productNo=${product.productNo()}&customerId=${customerId}" class="btn-order">[ORDER]</a>
                                 </c:when>
                                 <c:otherwise>
-                                    <span class="btn-disabled">Order Now</span>
+                                    <span style="color:#888;">[N/A]</span>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -108,7 +86,7 @@
                 </c:forEach>
                 <c:if test="${empty products}">
                     <tr>
-                        <td colspan="5" style="text-align: center; color: #888; padding: 20px;">No products match the criteria.</td>
+                        <td colspan="5" style="text-align: center; color: #888;">No products matching filters found.</td>
                     </tr>
                 </c:if>
             </tbody>
