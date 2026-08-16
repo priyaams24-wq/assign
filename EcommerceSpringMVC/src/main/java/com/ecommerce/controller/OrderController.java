@@ -33,7 +33,7 @@ public class OrderController {
     public ModelAndView checkout(@RequestParam String productNo, @RequestParam String customerId) {
         Optional<ProductResponse> productOpt = productService.getProductByNo(productNo);
         if (!productOpt.isPresent()) {
-            return new ModelAndView("redirect:/products/list?customerId=" + customerId);
+            return new ModelAndView("redirect:/webmvc/products/list?customerId=" + customerId);
         }
         ModelAndView mav = new ModelAndView("checkout");
         mav.addObject("product", productOpt.get());
@@ -110,7 +110,7 @@ public class OrderController {
             return mav;
         } catch (Exception e) {
             // If error, redirect back to portal
-            return new ModelAndView("redirect:/customer/portal?customerId=" + customerId + "&error=" + e.getMessage());
+            return new ModelAndView("redirect:/webmvc/customer/portal?customerId=" + customerId + "&error=" + e.getMessage());
         }
     }
 }

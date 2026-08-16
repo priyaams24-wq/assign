@@ -34,7 +34,7 @@ public class CustomerService {
             throw new ECommerceException("Customer ID already exists: " + request.customerId());
         }
         boolean emailExists = customerRepository.findAll().stream()
-                .anyMatch(c -> c.getEmail().equalsIgnoreCase(request.email()));
+y so mny error                .anyMatch(c -> c.email().equalsIgnoreCase(request.email()));
         if (emailExists) {
             throw new ECommerceException("Email address already exists: " + request.email());
         }

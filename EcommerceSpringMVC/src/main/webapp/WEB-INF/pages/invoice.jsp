@@ -84,7 +84,7 @@
                         <td style="color: #28a745; font-weight: bold;">₹${String.format("%,.2f", item.amount())}</td>
                     </tr>
                 </c:forEach>
-                <c:if test="${empty invoice.orders}">
+                <c:if test="${empty invoice.orders()}">
                     <tr>
                         <td colspan="6" style="text-align: center; color: #888; padding: 20px;">No invoice items available.</td>
                     </tr>

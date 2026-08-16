@@ -29,7 +29,7 @@ public class CustomerController {
     public ModelAndView login(@RequestParam String email, @RequestParam String password) {
         Optional<CustomerResponse> optCustomer = customerService.login(email, password);
         if (optCustomer.isPresent()) {
-            return new ModelAndView("redirect:/customer/portal?customerId=" + optCustomer.get().customerId());
+            return new ModelAndView("redirect:/webmvc/customer/portal?customerId=" + optCustomer.get().customerId());
         }
         ModelAndView mav = new ModelAndView("login");
         mav.addObject("error", "Invalid email or password");
@@ -63,7 +63,7 @@ public class CustomerController {
     public ModelAndView showPortal(@RequestParam String customerId) {
         Optional<CustomerResponse> refreshed = customerService.getCustomerById(customerId);
         if (!refreshed.isPresent()) {
-            return new ModelAndView("redirect:/customer/login");
+            return new ModelAndView("redirect:/webmvc/customer/login");
         }
         ModelAndView mav = new ModelAndView("portal");
         mav.addObject("customer", refreshed.get());
@@ -73,6 +73,6 @@ public class CustomerController {
 
     @GetMapping("/logout")
     public ModelAndView logout() {
-        return new ModelAndView("redirect:/customer/login");
+        return new ModelAndView("redirect:/webmvc/customer/login");
     }
 }
