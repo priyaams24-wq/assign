@@ -1,6 +1,5 @@
 package com.ecommerce.controller;
 
-import com.ecommerce.dto.CustomerResponse;
 import com.ecommerce.dto.InvoiceResponse;
 import com.ecommerce.dto.OrderDetailsResponse;
 import com.ecommerce.dto.OrderResponse;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -32,32 +30,27 @@ public class OrderController {
     private ProductService productService;
 
     @GetMapping("/checkout")
-    public ModelAndView checkout(@RequestParam String productNo, HttpSession session) {
-        if (session.getAttribute("loggedInCustomer") == null) {
-            return new ModelAndView("redirect:/customer/login");
-        }
+    public ModelAndView checkout(@RequestParam String productNo, @RequestParam String customerId) {
         Optional<ProductResponse> productOpt = productService.getProductByNo(productNo);
         if (!productOpt.isPresent()) {
-            return new ModelAndView("redirect:/products/list");
+            return new ModelAndView("redirect:/products/list?customerId=" + customerId);
         }
         ModelAndView mav = new ModelAndView("checkout");
         mav.addObject("product", productOpt.get());
+        mav.addObject("customerId", customerId);
         return mav;
     }
 
     @PostMapping("/place")
     public ModelAndView placeOrder(@RequestParam String productNo,
                                    @RequestParam int quantity,
-                                   HttpSession session) {
-        CustomerResponse loggedIn = (CustomerResponse) session.getAttribute("loggedInCustomer");
-        if (loggedIn == null) {
-            return new ModelAndView("redirect:/customer/login");
-        }
+                                   @RequestParam String customerId) {
         try {
-            OrderResponse order = orderService.placeOrder(loggedIn.customerId(), productNo, quantity);
+            OrderResponse order = orderService.placeOrder(customerId, productNo, quantity);
             ModelAndView mav = new ModelAndView("receipt");
             mav.addObject("order", order);
             mav.addObject("quantity", quantity);
+            mav.addObject("customerId", customerId);
             Optional<ProductResponse> prodOpt = productService.getProductByNo(productNo);
             prodOpt.ifPresent(p -> {
                 mav.addObject("product", p);
@@ -68,35 +61,38 @@ public class OrderController {
             Optional<ProductResponse> prodOpt = productService.getProductByNo(productNo);
             ModelAndView mav = new ModelAndView("checkout");
             prodOpt.ifPresent(p -> mav.addObject("product", p));
+            mav.addObject("customerId", customerId);
             mav.addObject("error", e.getMessage());
             return mav;
         }
     }
 
     @GetMapping("/history")
-    public ModelAndView history(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
-                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate afterDate,
-                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate beforeDate,
-                                HttpSession session) {
-        CustomerResponse loggedIn = (CustomerResponse) session.getAttribute("loggedInCustomer");
-        if (loggedIn == null) {
-            return new ModelAndView("redirect:/customer/login");
-        }
+    public ModelAndView history(@RequestParam String customerId,
+                                @RequestParam(required = false) String fromDate,
+                                @RequestParam(required = false) String toDate,
+                                @RequestParam(required = false) String afterDate,
+                                @RequestParam(required = false) String beforeDate) {
+
+        LocalDate from = (fromDate != null && !fromDate.trim().isEmpty()) ? LocalDate.parse(fromDate.trim()) : null;
+        LocalDate to = (toDate != null && !toDate.trim().isEmpty()) ? LocalDate.parse(toDate.trim()) : null;
+        LocalDate after = (afterDate != null && !afterDate.trim().isEmpty()) ? LocalDate.parse(afterDate.trim()) : null;
+        LocalDate before = (beforeDate != null && !beforeDate.trim().isEmpty()) ? LocalDate.parse(beforeDate.trim()) : null;
 
         List<OrderDetailsResponse> history;
-        if (fromDate != null && toDate != null) {
-            history = orderService.getCustomerOrderHistoryBetween(loggedIn.customerId(), fromDate, toDate);
-        } else if (afterDate != null) {
-            history = orderService.getCustomerOrderHistoryAfter(loggedIn.customerId(), afterDate);
-        } else if (beforeDate != null) {
-            history = orderService.getCustomerOrderHistoryBefore(loggedIn.customerId(), beforeDate);
+        if (from != null && to != null) {
+            history = orderService.getCustomerOrderHistoryBetween(customerId, from, to);
+        } else if (after != null) {
+            history = orderService.getCustomerOrderHistoryAfter(customerId, after);
+        } else if (before != null) {
+            history = orderService.getCustomerOrderHistoryBefore(customerId, before);
         } else {
-            history = orderService.getCustomerOrderHistory(loggedIn.customerId());
+            history = orderService.getCustomerOrderHistory(customerId);
         }
 
         ModelAndView mav = new ModelAndView("history");
         mav.addObject("history", history);
+        mav.addObject("customerId", customerId);
         mav.addObject("fromDate", fromDate);
         mav.addObject("toDate", toDate);
         mav.addObject("afterDate", afterDate);
@@ -105,21 +101,16 @@ public class OrderController {
     }
 
     @GetMapping("/invoice")
-    public ModelAndView generateInvoice(HttpSession session) {
-        CustomerResponse loggedIn = (CustomerResponse) session.getAttribute("loggedInCustomer");
-        if (loggedIn == null) {
-            return new ModelAndView("redirect:/customer/login");
-        }
+    public ModelAndView generateInvoice(@RequestParam String customerId) {
         try {
-            InvoiceResponse invoice = orderService.generateCustomerInvoice(loggedIn.customerId());
+            InvoiceResponse invoice = orderService.generateCustomerInvoice(customerId);
             ModelAndView mav = new ModelAndView("invoice");
             mav.addObject("invoice", invoice);
+            mav.addObject("customerId", customerId);
             return mav;
         } catch (Exception e) {
-            ModelAndView mav = new ModelAndView("portal");
-            mav.addObject("customer", loggedIn);
-            mav.addObject("error", e.getMessage());
-            return mav;
+            // If error, redirect back to portal
+            return new ModelAndView("redirect:/customer/portal?customerId=" + customerId + "&error=" + e.getMessage());
         }
     }
 }

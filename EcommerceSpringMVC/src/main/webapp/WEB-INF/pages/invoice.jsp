@@ -27,7 +27,7 @@
     <div class="container">
         <div class="header">
             <h1>Customer Invoice Summary</h1>
-            <a href="${pageContext.request.contextPath}/webmvc/customer/portal" class="btn-back">Back to Portal</a>
+            <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">Back to Portal</a>
         </div>
 
         <div class="info-grid">

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -20,14 +19,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/list")
-    public ModelAndView listProducts(@RequestParam(required = false) String filter,
+    public ModelAndView listProducts(@RequestParam String customerId,
+                                     @RequestParam(required = false) String filter,
                                      @RequestParam(required = false) Double minPrice,
                                      @RequestParam(required = false) Double maxPrice,
-                                     @RequestParam(required = false) Integer minStock,
-                                     HttpSession session) {
-        if (session.getAttribute("loggedInCustomer") == null) {
-            return new ModelAndView("redirect:/customer/login");
-        }
+                                     @RequestParam(required = false) Integer minStock) {
 
         List<ProductResponse> products;
         if ("available".equals(filter)) {
@@ -42,6 +38,7 @@ public class ProductController {
 
         ModelAndView mav = new ModelAndView("products");
         mav.addObject("products", products);
+        mav.addObject("customerId", customerId);
         mav.addObject("filter", filter);
         mav.addObject("minPrice", minPrice);
         mav.addObject("maxPrice", maxPrice);

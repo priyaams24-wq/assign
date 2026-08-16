@@ -45,7 +45,7 @@
             <strong style="color: #28a745;">₹${String.format("%,.2f", amount)}</strong>
         </div>
 
-        <a href="${pageContext.request.contextPath}/webmvc/customer/portal" class="btn-portal">Return to Portal</a>
+        <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-portal">Return to Portal</a>
     </div>
 </body>
 </html>

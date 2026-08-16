@@ -31,12 +31,13 @@
     <div class="container">
         <div class="header">
             <h1>Your Order History</h1>
-            <a href="${pageContext.request.contextPath}/webmvc/customer/portal" class="btn-back">Back to Portal</a>
+            <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">Back to Portal</a>
         </div>
 
         <div class="filters">
             <h4 style="margin: 0 0 10px 0;">Filter Order History</h4>
             <form action="${pageContext.request.contextPath}/webmvc/orders/history" method="get">
+                <input type="hidden" name="customerId" value="${customerId}" />
                 <div class="filter-group">
                     <label>From Date</label>
                     <input type="date" name="fromDate" value="${fromDate}" />

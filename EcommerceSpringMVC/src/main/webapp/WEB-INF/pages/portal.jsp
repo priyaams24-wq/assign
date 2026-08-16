@@ -42,15 +42,15 @@
 
         <h2>Select an Action</h2>
         <div class="menu-grid">
-            <a href="${pageContext.request.contextPath}/webmvc/products/list" class="menu-card">
+            <a href="${pageContext.request.contextPath}/webmvc/products/list?customerId=${customerId}" class="menu-card">
                 <h3>Browse Products</h3>
                 <p>View all items and place new orders</p>
             </a>
-            <a href="${pageContext.request.contextPath}/webmvc/orders/history" class="menu-card">
+            <a href="${pageContext.request.contextPath}/webmvc/orders/history?customerId=${customerId}" class="menu-card">
                 <h3>Order History</h3>
                 <p>Filter and search past purchase records</p>
             </a>
-            <a href="${pageContext.request.contextPath}/webmvc/orders/invoice" class="menu-card">
+            <a href="${pageContext.request.contextPath}/webmvc/orders/invoice?customerId=${customerId}" class="menu-card">
                 <h3>Generate Invoice</h3>
                 <p>Download summary and key metrics of orders</p>
             </a>

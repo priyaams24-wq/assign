@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Controller
@@ -22,19 +21,15 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping("/login")
-    public ModelAndView showLoginPage(HttpSession session) {
-        if (session.getAttribute("loggedInCustomer") != null) {
-            return new ModelAndView("redirect:/customer/portal");
-        }
+    public ModelAndView showLoginPage() {
         return new ModelAndView("login");
     }
 
     @PostMapping("/login")
-    public ModelAndView login(@RequestParam String email, @RequestParam String password, HttpSession session) {
+    public ModelAndView login(@RequestParam String email, @RequestParam String password) {
         Optional<CustomerResponse> optCustomer = customerService.login(email, password);
         if (optCustomer.isPresent()) {
-            session.setAttribute("loggedInCustomer", optCustomer.get());
-            return new ModelAndView("redirect:/customer/portal");
+            return new ModelAndView("redirect:/customer/portal?customerId=" + optCustomer.get().customerId());
         }
         ModelAndView mav = new ModelAndView("login");
         mav.addObject("error", "Invalid email or password");
@@ -42,10 +37,7 @@ public class CustomerController {
     }
 
     @GetMapping("/register")
-    public ModelAndView showRegisterPage(HttpSession session) {
-        if (session.getAttribute("loggedInCustomer") != null) {
-            return new ModelAndView("redirect:/customer/portal");
-        }
+    public ModelAndView showRegisterPage() {
         return new ModelAndView("register");
     }
 
@@ -68,25 +60,19 @@ public class CustomerController {
     }
 
     @GetMapping("/portal")
-    public ModelAndView showPortal(HttpSession session) {
-        CustomerResponse loggedIn = (CustomerResponse) session.getAttribute("loggedInCustomer");
-        if (loggedIn == null) {
+    public ModelAndView showPortal(@RequestParam String customerId) {
+        Optional<CustomerResponse> refreshed = customerService.getCustomerById(customerId);
+        if (!refreshed.isPresent()) {
             return new ModelAndView("redirect:/customer/login");
         }
-        Optional<CustomerResponse> refreshed = customerService.getCustomerById(loggedIn.customerId());
-        if (refreshed.isPresent()) {
-            session.setAttribute("loggedInCustomer", refreshed.get());
-            loggedIn = refreshed.get();
-        }
         ModelAndView mav = new ModelAndView("portal");
-        mav.addObject("customer", loggedIn);
+        mav.addObject("customer", refreshed.get());
+        mav.addObject("customerId", customerId);
         return mav;
     }
 
     @GetMapping("/logout")
-    public ModelAndView logout(HttpSession session) {
-        session.removeAttribute("loggedInCustomer");
-        session.invalidate();
+    public ModelAndView logout() {
         return new ModelAndView("redirect:/customer/login");
     }
 }

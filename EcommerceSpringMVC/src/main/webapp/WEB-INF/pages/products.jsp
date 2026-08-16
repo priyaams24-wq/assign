@@ -37,12 +37,13 @@
     <div class="container">
         <div class="header">
             <h1>Browse Products</h1>
-            <a href="${pageContext.request.contextPath}/webmvc/customer/portal" class="btn-back">Back to Portal</a>
+            <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">Back to Portal</a>
         </div>
 
         <div class="filters">
             <h4 style="margin: 0 0 10px 0;">Filter Products</h4>
             <form action="${pageContext.request.contextPath}/webmvc/products/list" method="get">
+                <input type="hidden" name="customerId" value="${customerId}" />
                 <div class="filter-group">
                     <label>Availability</label>
                     <select name="filter" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
@@ -96,7 +97,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${product.stock() > 0}">
-                                    <a href="${pageContext.request.contextPath}/webmvc/orders/checkout?productNo=${product.productNo()}" class="btn-order">Order Now</a>
+                                    <a href="${pageContext.request.contextPath}/webmvc/orders/checkout?productNo=${product.productNo()}&customerId=${customerId}" class="btn-order">Order Now</a>
                                 </c:when>
                                 <c:otherwise>
                                     <span class="btn-disabled">Order Now</span>

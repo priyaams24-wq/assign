@@ -38,12 +38,13 @@
 
         <form action="${pageContext.request.contextPath}/webmvc/orders/place" method="post">
             <input type="hidden" name="productNo" value="${product.productNo()}" />
+            <input type="hidden" name="customerId" value="${customerId}" />
             <div class="form-group">
                 <label>Order Quantity</label>
                 <input type="number" name="quantity" min="1" max="${product.stock()}" value="1" required />
             </div>
             <button type="submit" class="btn-submit">Place Order</button>
-            <a href="${pageContext.request.contextPath}/webmvc/products/list" class="btn-cancel">Cancel</a>
+            <a href="${pageContext.request.contextPath}/webmvc/products/list?customerId=${customerId}" class="btn-cancel">Cancel</a>
         </form>
     </div>
 </body>
