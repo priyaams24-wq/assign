@@ -44,7 +44,7 @@ Available Stock : ${product.stock()} units
             
             <br/>
             <button type="submit" class="btn-submit">Submit Order</button>
-            <a href="${pageContext.request.contextPath}/webmvc/products/list?customerId=${customerId}" class="btn-cancel">[Cancel / Go Back]</a>
+            <a href="${pageContext.request.contextPath}/webmvc/products/list/${customerId}" class="btn-cancel">[Cancel / Go Back]</a>
         </form>
     </div>
 </body>

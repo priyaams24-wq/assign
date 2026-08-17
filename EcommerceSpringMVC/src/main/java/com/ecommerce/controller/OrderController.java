@@ -7,9 +7,9 @@ import com.ecommerce.dto.ProductResponse;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,11 +29,11 @@ public class OrderController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/checkout")
-    public ModelAndView checkout(@RequestParam String productNo, @RequestParam String customerId) {
+    @GetMapping("/checkout/{productNo}/{customerId}")
+    public ModelAndView checkout(@PathVariable String productNo, @PathVariable String customerId) {
         Optional<ProductResponse> productOpt = productService.getProductByNo(productNo);
         if (!productOpt.isPresent()) {
-            return new ModelAndView("redirect:/webmvc/products/list?customerId=" + customerId);
+            return new ModelAndView("redirect:/webmvc/products/list/" + customerId);
         }
         ModelAndView mav = new ModelAndView("checkout");
         mav.addObject("product", productOpt.get());
@@ -67,8 +67,8 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/history")
-    public ModelAndView history(@RequestParam String customerId,
+    @GetMapping("/history/{customerId}")
+    public ModelAndView history(@PathVariable String customerId,
                                 @RequestParam(required = false) String fromDate,
                                 @RequestParam(required = false) String toDate,
                                 @RequestParam(required = false) String afterDate,
@@ -100,8 +100,8 @@ public class OrderController {
         return mav;
     }
 
-    @GetMapping("/invoice")
-    public ModelAndView generateInvoice(@RequestParam String customerId) {
+    @GetMapping("/invoice/{customerId}")
+    public ModelAndView generateInvoice(@PathVariable String customerId) {
         try {
             InvoiceResponse invoice = orderService.generateCustomerInvoice(customerId);
             ModelAndView mav = new ModelAndView("invoice");
@@ -110,7 +110,7 @@ public class OrderController {
             return mav;
         } catch (Exception e) {
             // If error, redirect back to portal
-            return new ModelAndView("redirect:/webmvc/customer/portal?customerId=" + customerId + "&error=" + e.getMessage());
+            return new ModelAndView("redirect:/webmvc/customer/portal/" + customerId + "?error=" + e.getMessage());
         }
     }
 }

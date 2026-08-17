@@ -18,14 +18,13 @@
 </head>
 <body>
     <div class="console-box">
-        <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">&lt; Back to Portal</a>
+        <a href="${pageContext.request.contextPath}/webmvc/customer/portal/${customerId}" class="btn-back">&lt; Back to Portal</a>
         
         <h2>--- ORDER HISTORY ---</h2>
         
         <div class="filter-section">
             <h4 style="margin: 0 0 10px 0;">[ FILTER ORDERS ]</h4>
-            <form action="${pageContext.request.contextPath}/webmvc/orders/history" method="get">
-                <input type="hidden" name="customerId" value="${customerId}" />
+            <form action="${pageContext.request.contextPath}/webmvc/orders/history/${customerId}" method="get">
                 
                 Date Range (YYYY-MM-DD):<br/>
                 From: <input type="text" name="fromDate" value="${fromDate}" style="width: 100px; font-family: 'Courier New';" placeholder="2026-08-01" /> 
@@ -38,7 +37,7 @@
                 <br/><br/>
                 
                 <input type="submit" value="Search Orders" style="font-family: 'Courier New'; padding: 4px 10px; cursor: pointer;" />
-                <a href="${pageContext.request.contextPath}/webmvc/orders/history?customerId=${customerId}" style="margin-left: 10px; color: #555;">[Reset]</a>
+                <a href="${pageContext.request.contextPath}/webmvc/orders/history/${customerId}" style="margin-left: 10px; color: #555;">[Reset]</a>
             </form>
         </div>
 

@@ -20,14 +20,13 @@
 </head>
 <body>
     <div class="console-box">
-        <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">&lt; Back to Portal</a>
+        <a href="${pageContext.request.contextPath}/webmvc/customer/portal/${customerId}" class="btn-back">&lt; Back to Portal</a>
         
         <h2>--- BROWSE PRODUCTS ---</h2>
         
         <div class="filter-section">
             <h4 style="margin: 0 0 10px 0;">[ FILTER PRODUCTS ]</h4>
-            <form action="${pageContext.request.contextPath}/webmvc/products/list" method="get">
-                <input type="hidden" name="customerId" value="${customerId}" />
+            <form action="${pageContext.request.contextPath}/webmvc/products/list/${customerId}" method="get">
                 
                 Availability:
                 <select name="filter" style="font-family: 'Courier New';">
@@ -46,7 +45,7 @@
                 <br/><br/>
                 
                 <input type="submit" value="Apply Filter" style="font-family: 'Courier New'; padding: 4px 10px; cursor: pointer;" />
-                <a href="${pageContext.request.contextPath}/webmvc/products/list?customerId=${customerId}" style="margin-left: 10px; color: #555;">[Reset]</a>
+                <a href="${pageContext.request.contextPath}/webmvc/products/list/${customerId}" style="margin-left: 10px; color: #555;">[Reset]</a>
             </form>
         </div>
 
@@ -75,7 +74,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${product.stock() > 0}">
-                                    <a href="${pageContext.request.contextPath}/webmvc/orders/checkout?productNo=${product.productNo()}&customerId=${customerId}" class="btn-order">[ORDER]</a>
+                                    <a href="${pageContext.request.contextPath}/webmvc/orders/checkout/${product.productNo()}/${customerId}" class="btn-order">[ORDER]</a>
                                 </c:when>
                                 <c:otherwise>
                                     <span style="color:#888;">[N/A]</span>

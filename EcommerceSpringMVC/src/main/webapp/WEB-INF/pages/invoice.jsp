@@ -18,7 +18,7 @@
 </head>
 <body>
     <div class="console-box">
-        <a href="${pageContext.request.contextPath}/webmvc/customer/portal?customerId=${customerId}" class="btn-back">&lt; Back to Portal</a>
+        <a href="${pageContext.request.contextPath}/webmvc/customer/portal/${customerId}" class="btn-back">&lt; Back to Portal</a>
         
         <h2>--- CUSTOMER INVOICE ---</h2>
         

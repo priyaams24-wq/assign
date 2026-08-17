@@ -6,6 +6,7 @@ import com.ecommerce.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,7 +30,7 @@ public class CustomerController {
     public ModelAndView login(@RequestParam String email, @RequestParam String password) {
         Optional<CustomerResponse> optCustomer = customerService.login(email, password);
         if (optCustomer.isPresent()) {
-            return new ModelAndView("redirect:/webmvc/customer/portal?customerId=" + optCustomer.get().customerId());
+            return new ModelAndView("redirect:/webmvc/customer/portal/" + optCustomer.get().customerId());
         }
         ModelAndView mav = new ModelAndView("login");
         mav.addObject("error", "Invalid email or password");
@@ -59,8 +60,8 @@ public class CustomerController {
         }
     }
 
-    @GetMapping("/portal")
-    public ModelAndView showPortal(@RequestParam String customerId) {
+    @GetMapping("/portal/{customerId}")
+    public ModelAndView showPortal(@PathVariable String customerId) {
         Optional<CustomerResponse> refreshed = customerService.getCustomerById(customerId);
         if (!refreshed.isPresent()) {
             return new ModelAndView("redirect:/webmvc/customer/login");

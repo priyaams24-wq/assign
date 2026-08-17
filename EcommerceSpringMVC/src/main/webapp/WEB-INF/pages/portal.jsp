@@ -32,9 +32,9 @@ Credit Balance : ₹${String.format("%,.2f", customer.credit())}
         </c:if>
 
         <h3>SELECT AN OPTION FROM MENU:</h3>
-        <a href="${pageContext.request.contextPath}/webmvc/products/list?customerId=${customerId}" class="menu-link">[1] Browse & Order Products</a>
-        <a href="${pageContext.request.contextPath}/webmvc/orders/history?customerId=${customerId}" class="menu-link">[2] View Order History</a>
-        <a href="${pageContext.request.contextPath}/webmvc/orders/invoice?customerId=${customerId}" class="menu-link">[3] Generate Customer Invoice</a>
+        <a href="${pageContext.request.contextPath}/webmvc/products/list/${customerId}" class="menu-link">[1] Browse & Order Products</a>
+        <a href="${pageContext.request.contextPath}/webmvc/orders/history/${customerId}" class="menu-link">[2] View Order History</a>
+        <a href="${pageContext.request.contextPath}/webmvc/orders/invoice/${customerId}" class="menu-link">[3] Generate Customer Invoice</a>
         <a href="${pageContext.request.contextPath}/webmvc/customer/logout" class="menu-link">[4] Logout / Exit</a>
     </div>
 </body>
