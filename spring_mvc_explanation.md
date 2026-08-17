@@ -104,3 +104,50 @@ Here is a list of the libraries configured under `WEB-INF/lib` and their roles:
 | **Spring Database Support** | `spring-jdbc`, `spring-tx` | Provides transaction management helpers and Spring's `DriverManagerDataSource` configuration class. |
 | **Database Drivers** | `postgresql-xxx.jar`, `mysql-connector-java-xxx.jar` | The vendor-specific translators that allow Java classes to speak SQL and run commands on PostgreSQL or MySQL databases. |
 | **JSP Rendering (JSTL)** | `jstl-1.2.jar` | Enables standard tag expressions in JSPs (like `<c:forEach>` loops, `<c:choose>`, and `<c:if>`). |
+
+---
+
+## 5. Understanding the URL Structure
+
+Let's dissect the standard application URL:
+
+```
+http://localhost:8080/EcommerceSpringMVC/webmvc/customer/login
+```
+
+| URL Part | Name | What it stands for |
+| :--- | :--- | :--- |
+| **`http://localhost:8080`** | **Server Address & Port** | Tells the browser to talk to Tomcat running locally on port `8080`. |
+| **`/EcommerceSpringMVC`** | **Context Path** | The name of your web application deployed in Tomcat (usually the Eclipse project name). It tells Tomcat which deployed app should handle the request. |
+| **`/webmvc`** | **Servlet Path Mapping** | Defined in `web.xml`. Tells Tomcat that this request must be handled specifically by Spring's `DispatcherServlet` Front Controller. |
+| **`/customer/login`** | **Controller Path** | The logical mappings defined in your Java code (using `@RequestMapping("/customer")` and `@GetMapping("/login")`). |
+
+---
+
+## 6. Request Parameters (`@RequestParam`) vs Path Variables (`@PathVariable`)
+
+We use both routing strategies in our project because each serves a specific purpose in web architecture:
+
+### A. Path Variables (`@PathVariable`)
+* **URL Format:** `/products/list/cust101` or `/orders/checkout/P101/cust101`
+* **When we use it:** For clean, RESTful navigation endpoints.
+* **Why it's better here:** It specifies a particular resource page (like a customer portal, checkout page, invoice, or history page).
+* **Code Example:**
+  ```java
+  @GetMapping("/portal/{customerId}")
+  public ModelAndView showPortal(@PathVariable String customerId) { ... }
+  ```
+
+### B. Request Parameters (`@RequestParam`)
+* **URL Format:** `/products/list/cust101?minPrice=50&maxPrice=100` or `/orders/place` (POST parameters inside request body)
+* **When we use it:** 
+  1. **HTML Forms:** Browser submits forms as parameters.
+  2. **Optional Search Filters:** To send query arguments that are completely optional.
+* **Why it's better here:** For filters like price ranges or minimum stocks, parameters can be omitted entirely (e.g. `?minStock=5` or no params). If we used path variables, we would have to map dozens of nested URL combinations (like `/products/list/cust101/minPrice/50/maxPrice/100/minStock/5`), which is bad design.
+* **Code Example:**
+  ```java
+  @GetMapping("/list/{customerId}")
+  public ModelAndView listProducts(@PathVariable String customerId, @RequestParam(required = false) Double minPrice) { ... }
+  ```
+
+
